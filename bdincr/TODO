@@ -1,0 +1,66 @@
+Fichiers TODO : masques par .htaccess
+
+Pour la classe de BD : 
+fonction de purge / archivage
+fonction undo / redo ?
+Niveau donnees membres, les champs de BD doivent etre prefixes par rapport aux donnees membres qui ne sont pas des champs de BD (ou l'inverse, a voir), histoire de ne pas sauver de donnees inutiles
+les fonctions load et save doivent prendre la data a utiliser en argument facultatif, pour que 2 objets puissent utiliser la meme (dans la cas de 2 objets qui composeraient un meme objet)
+
+Ainsi : pour ecrire une application de carnet d'adresse par exemple, il suffit d'ecrire une classe adresses, et une classe personne qui contient plusieurs adresses. On n'aura quasi rien a faire niveau BD (a part creer la table, et encore).
+Pour la validation des donnees, une surcharge de save fera l'affaire ? ou un wrapper plutot
+
+Structure du style : champ, valide_a_partir_de_la_release, champ_est_supprime
+Permet de revenir en arriere au niveau du code ET de la base de données (sans perdre les données de la release recente : on ignore simplement les champs supplementaires...)
+
+Fonctionnalite : page de verif de l'install
+    Verifie que la BD est bien conforme aux controleurs installes et propose de la mettre a jour si necessaire
+
+Versions : 
+    MAJEURES : 
+        automvc 1 (phoneo, jvv, etc...), 
+        automvc 2 (celle ci)
+    MINEURES : fonctionnalites
+        automvc 1.0 (phoneo)
+        automvc 1.1 (jvv ?)
+    BUG-FIX et SECURITY : applicables a chaque version concernée
+    BRANCHES 
+        stable : automvc 2 trunk
+        experimentales : automvc 2 avec BD versionnee
+
+Verification qu'un patch est applicable a un fichier : " grep des lignes concernées | md5 " pour verifier si le code a ete modifie specifiquement
+
+Ameliorations importantes a prevoir :
+AMELIORATION 1
+- séparer vues et templates :
+    + vue = une classe, comme le modele ou le controleur. cela permettra d'avoir des fonctions (donc d'obtenir la souplesse des boucles spip/thelia)
+    + template = partie phtml, qui peut faire appel aux fonctions de la vue
+    Ex : les fonctions de la vue positionnent des variables $this->id, $this->label... qui seront utilisables dans le template : 
+    <!-- affichages des categories -->
+    <ul>
+
+<?php
+$categories = $this->getCategories();
+foreach ($categories as $cat) {
+?>
+        <li><a href="...?id=<?php 
+            echo $cat->id; 
+        ?>><?php
+            echo $cat->label; 
+        ?></a></li>
+<?php
+}
+?>
+</ul>
+
+AMELIORATION 2
+- implementer une gestion de l'url rewriting qui ne repose pas sur le .htaccess
+    + par defaut, pas besoin de controleur ou d'actions vides... on affiche directement le template... mais cela pose un pb de securite potentiel. on utilisera donc cette gestion des url comme "liste blanche"
+
+AMELIORATION 3
+- trouver une solution pour separer le coeur du framework des extensions (surcharges ?)
+
+A GERER : 
+- SVN : trunk / branches / tags
+- xdebug / firephp
+- separation vue / template
+- url_rewriting comme liste blanche et redirections 301 des url redondantes (comme /index/index par exemple)
